@@ -11,6 +11,7 @@ Current Version: 1.0
 
 ## Creating Your Firebase Account
 MyFireChat requires a [Firebase](http://firebase.com) account in order to function.
+
 1. Go to [Firebase's Sign Up Page](https://www.firebase.com/signup/) to create your account.
 
 2. Create a new App. We recommend using the name of your forum as the App Name.
