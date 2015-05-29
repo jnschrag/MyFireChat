@@ -6,7 +6,7 @@
  *
  * @package MyFireChat
  * @author  Jacque Schrag and Jared Short
- * @license http://opensource.org/licenses/mit-license.php MIT license
+ * @license http://www.gnu.org/licenses/
  * @version 1.0
  */
 
