@@ -20,6 +20,8 @@ MyFireChat requires a [Firebase](http://firebase.com) account in order to functi
 
 4. To use MyFireChat, you will need the App URL and a Firebase Secret. These can both be accessed via the Firebase Manage App manager.
 
+5. Copy the contents of security_rules.json and paste them in Security & Rules section of your Firebase Manage App Settings. Save the rules.
+
 ## Questions & Contributions
 If you would like to contribute to the development of MyFireChat, you can do so by submitting a pull request. We ask that you submit one pull request per feature. If you have an idea or find a bug, please create an issue so we can update the plugin quickly. The MyFireChat Wiki will be in active development and is the first place you should look for documentation questions.
 
