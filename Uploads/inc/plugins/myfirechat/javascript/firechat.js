@@ -167,7 +167,7 @@ this["FirechatDefaultTemplates"]["templates/user-search-list-item.html"] = funct
       }, function(error, committed, snapshot) {
         self._user = snapshot.val();
         self._moderatorsRef.child(self._userId).once('value', function(snapshot) {
-        	console.log(snapshot.val());
+        	
           self._isModerator = !!snapshot.val();
           root.setTimeout(onComplete, 0);
         });

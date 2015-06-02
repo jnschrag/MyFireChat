@@ -33,100 +33,100 @@ $(document).ready( function() {
 
 
 
-	if (!$ || (parseInt($().jquery.replace(/\./g, ""), 10) < 170)) {
-    	throw new Error("jQuery 1.7 or later required!");
-  	}
+  if (!$ || (parseInt($().jquery.replace(/\./g, ""), 10) < 170)) {
+      throw new Error("jQuery 1.7 or later required!");
+    }
 
-	var MyFireChat = {
+  var MyFireChat = {
 
-		myFireChatRef: null,
-		myFireChat: null,
-		firebaseData: null,
-		authData: null,
+    myFireChatRef: null,
+    myFireChat: null,
+    firebaseData: null,
+    authData: null,
     storage: $.initNamespaceStorage('myFireChatStorage').localStorage,
 
-		init: function() {
-			this.myFireChat = this.getAuthorization();
-		},
+    init: function() {
+      this.myFireChat = this.getAuthorization();
+    },
 
-		getAuthorization: function() {
-			var _this = this;
+    getAuthorization: function() {
+      var _this = this;
 
-  			$.get( "/xmlhttp.php?action=myfirechat_auth", function( firebaseData ) {
-  					_this.firebaseData = firebaseData;
-  					_this.initFirebaseAuth();            
-  				})
-  				.fail(function() {
-  			    	alert( "Something went wrong, please try again later." );
-  			});
+        $.get( rootpath+"/xmlhttp.php?action=myfirechat_auth", function( firebaseData ) {
+            _this.firebaseData = firebaseData;
+            _this.initFirebaseAuth();            
+          })
+          .fail(function() {
+              alert( "Something went wrong, please try again later." );
+        });
 
-		},
+    },
 
-		initFirebaseAuth: function(){
-			var _this = this;
+    initFirebaseAuth: function(){
+      var _this = this;
 
-			this.myFireChatRef = new Firebase(_this.firebaseData.url);
+      this.myFireChatRef = new Firebase(_this.firebaseData.url);
 
-			this.myFireChatRef.authWithCustomToken(_this.firebaseData['token'], function(error, authData) {
-			  if (error) {
-			    console.log("Login Failed: ", error);
-			  } else {
-			  	_this.authData = authData;
-			  	_this.initChat();
-			  }
-			});
+      this.myFireChatRef.authWithCustomToken(_this.firebaseData['token'], function(error, authData) {
+        if (error) {
+          console.log("Login Failed: ", error);
+        } else {
+          _this.authData = authData;
+          _this.initChat();
+        }
+      });
 
-		},
+    },
 
-		initChat: function() {
-		  var _this = this;
+    initChat: function() {
+      var _this = this;
 
-		  var options = {numMaxMessages: parseInt(_this.firebaseData.numMaxMessages), maxLengthRoomName: parseInt(_this.firebaseData.maxLengthRoomName), maxLengthMessage: parseInt(_this.firebaseData.maxLengthMessage), limitWaitTime: parseInt(_this.firebaseData.limitWaitTime)};
+      var options = {numMaxMessages: parseInt(_this.firebaseData.numMaxMessages), maxLengthRoomName: parseInt(_this.firebaseData.maxLengthRoomName), maxLengthMessage: parseInt(_this.firebaseData.maxLengthMessage), limitWaitTime: parseInt(_this.firebaseData.limitWaitTime)};
 
 
-		  // Create UI Object
-		  myFireChat = new FirechatUI(_this.myFireChatRef, document.getElementById('myfirechat_wrapper'), options);
+      // Create UI Object
+      myFireChat = new FirechatUI(_this.myFireChatRef, document.getElementById('myfirechat_wrapper'), options);
 
-		  function initializePlugins() {
-			    var deferreds = [];
+      function initializePlugins() {
+          var deferreds = [];
 
-			    $.each(myFireChat.messageParsingPlugins, function(pluginName, plugin){
-				    deferreds.push(plugin.init());
-				});
+          $.each(myFireChat.messageParsingPlugins, function(pluginName, plugin){
+            deferreds.push(plugin.init());
+        });
 
-				$.each(myFireChat.commandParsingPlugins, function(pluginName, plugin){
-				    deferreds.push(plugin.init());
-				});
+        $.each(myFireChat.commandParsingPlugins, function(pluginName, plugin){
+            deferreds.push(plugin.init());
+        });
 
-			    return deferreds;
-		  }
+          return deferreds;
+      }
 
-		  // Load plugins, we may need to call the server during init so wait for all ajax to complete
-		  $.when.apply($, initializePlugins()).done(function() {
+      // Load plugins, we may need to call the server during init so wait for all ajax to complete
+      $.when.apply($, initializePlugins()).done(function() {
 
               //Default room to enter on Authorization
-			  if(_this.firebaseData.defaultroom){
-				  _this.myFireChatRef.onAuth(function(authData) {
-				      if (authData) {
-				        myFireChat.setUser(authData.uid, authData.auth.displayName, authData.auth.avatar);
-				        setTimeout(function() {
-				          myFireChat._chat.enterRoom(_this.firebaseData.defaultroom)
-				        }, 500);
-				      } else {
-				        myFireChat._chat.enterRoom(_this.firebaseData.defaultroom)
-				      }
-		    	  });
-			  }
+        if(_this.firebaseData.defaultroom){
+          _this.myFireChatRef.onAuth(function(authData) {
+              if (authData) {
+                myFireChat.setUser(authData.uid, authData.auth.displayName, authData.auth.avatar);
+                setTimeout(function() {
+                  myFireChat._chat.enterRoom(_this.firebaseData.defaultroom)
+                }, 500);
+              } else {
+                myFireChat._chat.enterRoom(_this.firebaseData.defaultroom)
+              }
+            });
+        }
 
-			  return myFireChat;
+        return myFireChat;
           });
 
         }
 
-	};
+  };
 
 
-	MyFireChat.init();
+  MyFireChat.init();
 
 });
 
@@ -163,8 +163,6 @@ $(document).ready( function() {
     options = options || {};
     this._options = options;
 
-    console.log(options);
-
     this._el = el;
     this._user = null;
     this._chat = new Firechat(firebaseRef, options);
@@ -180,20 +178,20 @@ $(document).ready( function() {
 
     // TODO: We should make these settable via admin panel
 
-	    // Define some constants regarding maximum lengths, client-enforced.
-	    this.maxLengthUsername = 20;
-	    this.maxLengthUsernameDisplay = 20;
-	    this.maxLengthRoomName = this._options.maxLengthRoomName;
-	    this.maxLengthMessage = this._options.maxLengthMessage;
-	    this.maxUserSearchResults = 100;
+      // Define some constants regarding maximum lengths, client-enforced.
+      this.maxLengthUsername = 20;
+      this.maxLengthUsernameDisplay = 20;
+      this.maxLengthRoomName = this._options.maxLengthRoomName;
+      this.maxLengthMessage = this._options.maxLengthMessage;
+      this.maxUserSearchResults = 100;
 
-	    // Rate limit messages from a given user with some defaults.
-	    this.$rateLimit = {
-	      limitCount: 10,         // max number of events
-	      limitInterval: 10000,   // max interval for above count in milliseconds
-	      limitWaitTime: this._options.limitWaitTime,   // wait time if a user hits the wait limit
-	      history: {}
-	    };
+      // Rate limit messages from a given user with some defaults.
+      this.$rateLimit = {
+        limitCount: 10,         // max number of events
+        limitInterval: 10000,   // max interval for above count in milliseconds
+        limitWaitTime: this._options.limitWaitTime,   // wait time if a user hits the wait limit
+        history: {}
+      };
 
 
     // Define some useful regexes.
@@ -203,134 +201,134 @@ $(document).ready( function() {
     this._renderLayout();
 
     this.commandParsingPlugins = {
-  		// Dice Roll Plugin
-  		"dice" : {
+      // Dice Roll Plugin
+      "dice" : {
 
-  			init: function(){
-  				return;
-  			},
+        init: function(){
+          return;
+        },
 
-  			process: function(message){
-  				var _this = this;
-  				var inputString = message;
-				  var findme = "/roll";
-				  var command = inputString.split(" ")[0];
-				  var sides = inputString.split(" ")[1];
+        process: function(message){
+          var _this = this;
+          var inputString = message;
+          var findme = "/roll";
+          var command = inputString.split(" ")[0];
+          var sides = inputString.split(" ")[1];
 
-				  if (command == findme) {
-					 message = "/me "+this.rollDice(sides);
-				  }
-  				
+          if (command == findme) {
+           message = "/me "+this.rollDice(sides);
+          }
+          
           return message;
-  		  },
+        },
 
-  			rollDice: function(numberOfSides) {
-  				
-  				if(typeof numberOfSides === 'undefined'){
-  					return " attempted to roll a dice with no sides! :dodgy:";
-  				}
+        rollDice: function(numberOfSides) {
+          
+          if(typeof numberOfSides === 'undefined'){
+            return " attempted to roll a dice with no sides! :dodgy:";
+          }
 
-				var total = Math.random()*numberOfSides + 1 | 0;
-				return "rolls a d"+numberOfSides+" and gets "+ total;
-  			}
+        var total = Math.random()*numberOfSides + 1 | 0;
+        return "rolls a d"+numberOfSides+" and gets "+ total;
+        }
 
-  		},
+      },
 
-  		// Pre-Message Commands
-  		//
-  		// To add new commands, create a new object with the name of the command as it would be
-  		// typed in to the message bar. We pass in the full "message" object so you can do any manipulation needed
-  		"basic-commands" : {
+      // Pre-Message Commands
+      //
+      // To add new commands, create a new object with the name of the command as it would be
+      // typed in to the message bar. We pass in the full "message" object so you can do any manipulation needed
+      "basic-commands" : {
 
-  			init: function(){
-  				return;
-  			},
+        init: function(){
+          return;
+        },
 
-  			process: function(message) {
-  				var _this = this;
+        process: function(message) {
+          var _this = this;
 
-  				// Dynmically can process any command at the beginning
-  				// simply based on matching 
-  				var command = message.split(" ")[0];
-  				if(typeof _this[command] === 'function')
-  				{
-  					// Remove command by default for convinience
-  					// If people really want it they can reappend it at the beginning
-  					message = message.slice(command.length);
-  					message = _this[command].apply(this, Array.prototype.slice.call(arguments, message));
-  				}
+          // Dynmically can process any command at the beginning
+          // simply based on matching 
+          var command = message.split(" ")[0];
+          if(typeof _this[command] === 'function')
+          {
+            // Remove command by default for convinience
+            // If people really want it they can reappend it at the beginning
+            message = message.slice(command.length);
+            message = _this[command].apply(this, Array.prototype.slice.call(arguments, message));
+          }
 
-  				return message;
-  			},
+          return message;
+        },
 
-  			"/help": function(message) {
-          MyBB.popupWindow('misc.php?action=chat_help', null, true); return false;
-  				return message;
-  			}
+        "/help": function(message) {
+          MyBB.popupWindow(rootpath+'/misc.php?action=chat_help', null, true); return false;
+          return message;
+        }
 
-  		}
+      }
     };
 
     // Define message parsing plugins
     this.messageParsingPlugins = {
-    	// Smilies Plugin
-    	"smilies" : {
-    		smilies: {},
+      // Smilies Plugin
+      "smilies" : {
+        smilies: {},
 
-    		init: function(){
-    			var _this = this;
+        init: function(){
+          var _this = this;
 
-    			// Grab cache if we have
+          // Grab cache if we have
           if(self._storage.isEmpty('smilies'))
           {
-  		  		$.ajax({
-          		url: '/xmlhttp.php?action=myfirechat_smilies',
-          		success: function(data){
-          			_this.smilies = data;
+            $.ajax({
+              url: rootpath+'/xmlhttp.php?action=myfirechat_smilies',
+              success: function(data){
+                _this.smilies = data;
                 self._storage.set('smilies', _this.smilies);
-          		}
-          	});
+              }
+            });
           }
           else
           {
             _this.smilies = self._storage.get('smilies');
           }
 
-    		},
+        },
 
-		  	process: function(message){
-		  		var _this = this;
+        process: function(message){
+          var _this = this;
 
-        		$.each(_this.smilies, function(key, smily){
-		  			message.message = message.message.replace(new RegExp(_this.escapeRegExp(smily.find), 'g'), "<img src='/"+smily.image+"' />");
-		  		});
+            $.each(_this.smilies, function(key, smily){
+            message.message = message.message.replace(new RegExp(_this.escapeRegExp(smily.find), 'g'), "<img src='/"+smily.image+"' />");
+          });
 
-        		return message;
-		  	},
+            return message;
+        },
 
-		  	escapeRegExp: function(string){
-			    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-			  }
-  		},
+        escapeRegExp: function(string){
+          return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        }
+      },
 
-  		// Wordfilter Plugin
-    	"wordfilter" : {
-    		wordlist: [],
+      // Wordfilter Plugin
+      "wordfilter" : {
+        wordlist: [],
 
-    		init: function(){
-    			var _this = this;
+        init: function(){
+          var _this = this;
 
-    			// Grab wordfilter from MyBB
+          // Grab wordfilter from MyBB
           // Grab cache if we have
           if(self._storage.isEmpty('wordlistData'))
           {
-  		  		$.ajax({
-          			url: '/xmlhttp.php?action=myfirechat_wordfilter',
-          			success: function(data){
+            $.ajax({
+                url: rootpath+'/xmlhttp.php?action=myfirechat_wordfilter',
+                success: function(data){
                     _this.dataToWordList(data);
                     self._storage.set('wordlistData', data);
                   }
-          		});
+              });
           }
           else
           {
@@ -338,7 +336,7 @@ $(document).ready( function() {
             _this.dataToWordList(data);
           }
 
-    		},
+        },
 
         dataToWordList: function(data){
           _this = this;
@@ -354,46 +352,46 @@ $(document).ready( function() {
           });
         },
 
-		  	process: function(message){
-		  		var _this = this;
+        process: function(message){
+          var _this = this;
 
-        		$.each(_this.wordlist, function(key, wordpair){
-		  			message.message = message.message.replace(wordpair.regex, wordpair.replacement);
-		  		});
+            $.each(_this.wordlist, function(key, wordpair){
+            message.message = message.message.replace(wordpair.regex, wordpair.replacement);
+          });
 
-        		return message;
-		  	}
+            return message;
+        }
 
-		 //  	escapeRegExp: function(string){
-			//     return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-			// }
-  		},
+     //   escapeRegExp: function(string){
+      //     return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+      // }
+      },
 
-  		// MyBB Codes Plugin
-    	"mybbcodes" : {
+      // MyBB Codes Plugin
+      "mybbcodes" : {
 
-    		mycodes: [],
+        mycodes: [],
 
-    		init: function(){
-    			_this = this;
+        init: function(){
+          _this = this;
 
-    			// If we don't already have mybbcodes, get them
+          // If we don't already have mybbcodes, get them
           if(self._storage.isEmpty('mybbcodesData'))
           {
-  		  		$.ajax({
-          			url: '/xmlhttp.php?action=myfirechat_mybbcodes',
-          			success: function(data){
+            $.ajax({
+                url: rootpath+'/xmlhttp.php?action=myfirechat_mybbcodes',
+                success: function(data){
                   _this.dataToMyCodes(data);
                   self._storage.set('mybbcodesData', data);
-          			}
-          		});
+                }
+              });
           }
           else
           {
             var data = self._storage.get('mybbcodesData');
             _this.dataToMyCodes(data);
           }
-    		},
+        },
 
         // Because of needing to create and parse regex objects, we just redo this on every page load
         dataToMyCodes: function(data){
@@ -417,53 +415,53 @@ $(document).ready( function() {
 
         },
 
-		  	process: function(message){
-		  		var _this = this;
+        process: function(message){
+          var _this = this;
 
-		  		// Basic MyCodes
-        		$.each(_this.mycodes, function(index, mycode){
-		  			message.message = message.message.replace(mycode.regex, mycode.replacement);
-		  		});
+          // Basic MyCodes
+            $.each(_this.mycodes, function(index, mycode){
+            message.message = message.message.replace(mycode.regex, mycode.replacement);
+          });
 
-		  		// Custom MyCodes
+          // Custom MyCodes
 
-        		return message;
-		  	},
-  		},
+            return message;
+        },
+      },
 
-  		// Message Display Commands
-  		//
-  		// To add new commands, create a new object with the name of the command as it would be
-  		// typed in to the message bar. We pass in the full "message" object so you can do any manipulation needed
-  		"commands" : {
+      // Message Display Commands
+      //
+      // To add new commands, create a new object with the name of the command as it would be
+      // typed in to the message bar. We pass in the full "message" object so you can do any manipulation needed
+      "commands" : {
 
-  			init: function(){
-  				return;
-  			},
+        init: function(){
+          return;
+        },
 
-  			process: function(message) {
-  				var _this = this;
+        process: function(message) {
+          var _this = this;
 
-  				// Dynmically can process any command at the beginning
-  				// simply based on matching 
-  				var command = message.message.split(" ")[0];
-  				if(typeof _this[command] === 'function')
-  				{
-  					// Remove command by default for convinience
-  					// If people really want it they can reappend it at the beginning
-  					message.message = message.message.slice(command.length);
-  					message = _this[command].apply(this, Array.prototype.slice.call(arguments, message));
-  				}
+          // Dynmically can process any command at the beginning
+          // simply based on matching 
+          var command = message.message.split(" ")[0];
+          if(typeof _this[command] === 'function')
+          {
+            // Remove command by default for convinience
+            // If people really want it they can reappend it at the beginning
+            message.message = message.message.slice(command.length);
+            message = _this[command].apply(this, Array.prototype.slice.call(arguments, message));
+          }
 
-  				return message;
-  			},
+          return message;
+        },
 
-  			"/me": function(message) {
-  				message.message = "<i>"+ message.name + " " + message.message +"</i>";
-  				return message;
-  			}
+        "/me": function(message) {
+          message.message = "<i>"+ message.name + " " + message.message +"</i>";
+          return message;
+        }
 
-  		}
+      }
 
     };
 
@@ -818,34 +816,9 @@ $(document).ready( function() {
       var roomId = $(this).closest('[data-room-id]').data('room-id');
       var closestMessage = self.$messages[roomId][0].children[1];
       
-      //console.log(self.$messages[roomId][0].children[1].data('message-id'));
-
-      // var messageId = closestMessage.data('message-id');
-      // var messageTimestamp = closestMessage.data('timestamp');
-
-      // console.log(messageId);
-      // console.log(messageTimestamp);
-
-     //  var timestamp = 1431279245457;
-      
-     //  self._chat._messageRef.child(roomId).orderByChild('timestamp').startAt(timestamp - 10000000000).endAt(timestamp - 1).on("value", function(querySnapshot) {
-
-     //    var messages = [];
-  		 //  querySnapshot.forEach(function(qss) {
-  		 //    messages.push(qss.val());
-  		 //  });
-
-  		 //  messages.reverse();
-
-     //    $.each(messages, function(key, message){
-     //    	self.showMessage(roomId, message, true);
-     //    }); 
-        	  
-  	  // });
 
     // Pagination.
     var n = self._options.numMaxMessages;
-    console.log(n);
 
       i += n; // Record pagination updates.
       var messagesRef = self._chat._messageRef.child(roomId); 
@@ -1403,20 +1376,20 @@ $(document).ready( function() {
     $textarea.bind('keydown', function(e) {
       
       var message = self.trimWithEllipsis($textarea.val(), self.maxLengthMessage);
-      	
+        
       if ((e.which === 13) && (message !== '')) {
-      	
-      	$.each(self.commandParsingPlugins, function(pluginName, plugin){
-	  		message = plugin.process(message);
-	  	});
+        
+        $.each(self.commandParsingPlugins, function(pluginName, plugin){
+        message = plugin.process(message);
+      });
 
-      	$textarea.val('');
+        $textarea.val('');
 
-      	if(message.length > 0 )
-      	{
-      		self._chat.sendMessage(roomId, message);	
-      	}
-	  	
+        if(message.length > 0 )
+        {
+          self._chat.sendMessage(roomId, message);  
+        }
+      
 
         return false;
       }
@@ -1531,7 +1504,7 @@ $(document).ready( function() {
 
     // Easily extendable message processing
     $.each(self.messageParsingPlugins, function(pluginName, plugin){
-    	message = plugin.process(message);
+      message = plugin.process(message);
     });
 
     message.message = self.trimWithEllipsis(message.message, self.maxLengthMessage);
@@ -1552,9 +1525,9 @@ $(document).ready( function() {
       }
 
       if(prepend)
-      	$messages.prepend($message);
+        $messages.prepend($message);
       else
-      	$messages.append($message);
+        $messages.append($message);
 
       if (scrollToBottom) {
         $messages.scrollTop($messages[0].scrollHeight);
