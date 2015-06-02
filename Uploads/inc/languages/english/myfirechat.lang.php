@@ -7,7 +7,7 @@
  * @package MyFireChat
  * @author  Jacque Schrag and Jared Short
  * @license http://opensource.org/licenses/mit-license.php MIT license
- * @version 1.0
+ * @version 1.01
  */
 
 $l['myfirechat'] = 'My Fire Chat';
