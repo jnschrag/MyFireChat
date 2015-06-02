@@ -585,17 +585,20 @@ function myfirechat_ajax()
 
 	  		// Check if the user is a moderator of chat, if so, tell Firebase
 	  		// Check if user's UID is set to be a chat moderator
-	  		if(in_array($mybb->user['uid'], $mybb->settings['myfirechat_moderator_users']))
+	  		$modusers = explode(",",$mybb->settings['myfirechat_moderator_users']);
+	  		if(in_array($mybb->user['uid'], $modusers))
 	  		{
-	  			$response = $firebase->set('moderators', [$myfirechatuid => true]);
+	  			$response = $firebase->set('moderators', array($myfirechatuid => true));
 	  		}
 
 	  		// Check if user is a part of the groups set to be a chat moderator
-	  		if(in_array($mybb->user['usergroup'],$mybb->settings['myfirechat_moderator_groups']))
+	  		$modgroups = explode(",",$mybb->settings['myfirechat_moderator_groups']);
+	  		if(in_array($mybb->user['usergroup'],$modgroups))
 	  		{
-	  			$response = $firebase->set('moderators', [$myfirechatuid => true]);
+	  			$response = $firebase->set('moderators', array($myfirechatuid => true));
 	  		}
-
+	  		
+	  		// Create JSON array
 	  		$data = array('token' => $token, 'url' => $url, 'defaultroom'=> $mybb->settings["myfirechat_defaultroom"], 'numMaxMessages' => $mybb->settings['myfirechat_max_messages'], 'maxLengthRoomName' => $mybb->settings['myfirechat_max_room_name'], 'maxLengthMessage' => $mybb->settings['myfirechat_max_messages_length'], 'limitWaitTime' => $mybb->settings['myfirechat_flood_control']);
 
 	  		header("Content-type: application/json; charset={$charset}");
