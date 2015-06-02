@@ -585,17 +585,24 @@ function myfirechat_ajax()
 
 	  		// Check if the user is a moderator of chat, if so, tell Firebase
 	  		// Check if user's UID is set to be a chat moderator
+	  		$moderatorPath = 'moderators/'.$myfirechatuid;
 	  		$modusers = explode(",",$mybb->settings['myfirechat_moderator_users']);
 	  		if(in_array($mybb->user['uid'], $modusers))
 	  		{
-	  			$response = $firebase->set('moderators', array($myfirechatuid => true));
+	  			$response = $firebase->set($moderatorPath, true);
+	  		}
+	  		else {
+	  			$firebase->delete($moderatorPath);
 	  		}
 
 	  		// Check if user is a part of the groups set to be a chat moderator
 	  		$modgroups = explode(",",$mybb->settings['myfirechat_moderator_groups']);
 	  		if(in_array($mybb->user['usergroup'],$modgroups))
 	  		{
-	  			$response = $firebase->set('moderators', array($myfirechatuid => true));
+	  			$response = $firebase->set($moderatorPath, true);
+	  		}
+	  		else {
+	  			$firebase->delete($moderatorPath);
 	  		}
 	  		
 	  		// Create JSON array
