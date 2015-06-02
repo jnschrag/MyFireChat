@@ -7,7 +7,7 @@
  * @package MyFireChat
  * @author  Jacque Schrag and Jared Short
  * @license http://www.gnu.org/licenses/
- * @version 1.0
+ * @version 1.01
  */
 
 // Make sure we can't access this file directly from the browser.
@@ -31,7 +31,7 @@ function myfirechat_info()
 		'website'		=> 'https://github.com/jnschrag/MyFireChat',
 		'author'		=> 'Jacque Schrag & Jared Short',
 		'authorsite'	=> 'https://github.com/jnschrag',
-		'version'		=> '1.0',
+		'version'		=> '1.01',
 		'compatibility'	=> '18*',
 		'codename'		=> 'myfirechat'
 	);

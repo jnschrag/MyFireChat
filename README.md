@@ -1,7 +1,7 @@
 # MyFireChat
 MyFireChat is a Firebase chat plugin that integrates with myBB.
 
-Current Version: 1.0
+Current Version: 1.01
 
 ## Installation & Setup
 1. Download the plugin files.
